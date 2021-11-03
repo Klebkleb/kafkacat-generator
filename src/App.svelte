@@ -38,58 +38,68 @@
 	}
 </script>
 
-<h1>Kafkacat command generator</h1>
-<p>
-	Are you (like me) always struggling with the kafkacat command to the point
-	where you have just a bunch of ready-to-go commands saved up in a text file
-	that you just modify every time you need it?
-</p>
-<p>Then this is the tool for you!</p>
-<p>
-	Select if you want to produce or consume kafka messages, fill in the
-	parameters and voila, a ready made kafkacat command that you can copy and
-	paste where you need it. Enjoy!
-</p>
-<Menu options={menuOptions} on:menuItemChanged={menuOptionChanged} />
-<h3>Input</h3>
-<form>
-	<label for="ip">IP</label>
-	<input id="ip" bind:value={commandParameters.ip} />:<input
-		id="port"
-		type="number"
-		bind:value={commandParameters.port}
-	/>
+<div class="content">
+	<h1>Kafkacat command generator</h1>
+	<p>
+		Are you (like me) always struggling with the kafkacat command to the
+		point where you have just a bunch of ready-to-go commands saved up in a
+		text file that you just modify every time you need it?
+	</p>
+	<p>Then this is the tool for you!</p>
+	<p>
+		Select if you want to produce or consume kafka messages, fill in the
+		parameters and voila, a ready made kafkacat command that you can copy
+		and paste where you need it. Enjoy!
+	</p>
+	<Menu options={menuOptions} on:menuItemChanged={menuOptionChanged} />
+	<h3>Input</h3>
+	<form>
+		<label for="ip">IP</label>
+		<input id="ip" bind:value={commandParameters.ip} />:<input
+			id="port"
+			type="number"
+			bind:value={commandParameters.port}
+		/>
 
-	<label for="topic">Topic</label>
-	<input id="topic" bind:value={commandParameters.topic} />
-</form>
-{#if currentOption == "Produce"}
-	<Producer {commandParameters} bind:response bind:errorMessage />
-{:else if currentOption == "Consume"}
-	<Consumer {commandParameters} bind:response bind:errorMessage />
-{/if}
-{#if response}
-	<div>
-		<h3>Message</h3>
-		<button on:click={copy}>Copy</button>
-		<button on:click={clear}>Clear</button>
-		<p>{infoMessage}</p>
-		<pre>
+		<label for="topic">Topic</label>
+		<input id="topic" bind:value={commandParameters.topic} />
+	</form>
+	{#if currentOption == "Produce"}
+		<Producer {commandParameters} bind:response bind:errorMessage />
+	{:else if currentOption == "Consume"}
+		<Consumer {commandParameters} bind:response bind:errorMessage />
+	{/if}
+	{#if response}
+		<div>
+			<h3>Message</h3>
+			<button on:click={copy}>Copy</button>
+			<button on:click={clear}>Clear</button>
+			<p>{infoMessage}</p>
+			<pre>
   	<code>
     	{response}
   	</code>
 	</pre>
-	</div>
-{/if}
-{#if errorMessage}
-	<div>
-		<h3>Error</h3>
-		<p>{errorMessage}</p>
-		<button on:click={clear}>Clear</button>
-	</div>
-{/if}
+		</div>
+	{/if}
+	{#if errorMessage}
+		<div>
+			<h3>Error</h3>
+			<p>{errorMessage}</p>
+			<button on:click={clear}>Clear</button>
+		</div>
+	{/if}
+</div>
 
 <style>
+
+	.content {
+		background-color: white;
+		width: 800px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
 	pre {
 		overflow-x: auto;
 		white-space: pre-wrap;
