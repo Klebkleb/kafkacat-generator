@@ -1,56 +1,29 @@
 <script lang="ts">
-	import { CommandParameters } from "./model/CommandParameters";
+
 	import Toggle from "./Toggle.svelte";
-	import { createEventDispatcher } from 'svelte';
-	import { GenerationResult } from "./model/GenerationResult";
+	import { ProducerCommandParameters } from "./model/ProducerCommandParameters";
+	import GeneratorStandardInput from "./GeneratorStandardInput.svelte";
+	import { ProducerGenerationService } from "./service/ProducerGenerationService";
 
-	export let commandParameters: CommandParameters;
+	const generator = new ProducerGenerationService();
 
-	const dispatch = createEventDispatcher();
-	
-	let result: GenerationResult;
-	let isJsonMessage = true;
-	let message = "";
-	let header = "";
-
-	function generate() {
-		result = new GenerationResult();
-		try {
-			let msg: string;
-			if(isJsonMessage) {
-				let json = JSON.parse(message);
-				msg = JSON.stringify(json);
-			} else {
-				msg = message;
-			}
-			result.message = `echo '${msg}' | kafkacat -b ${commandParameters.ip}:${
-				commandParameters.port
-			} -t ${commandParameters.topic} ${
-				header ? "-H type=" + header : ""
-			} -c 1 -P`;
-			result.success = true;
-		} catch (e) {
-			console.log(e);
-			result.message = e.message;
-			result.success = false;
-		}
-		dispatch('commandGenerated', result)
-	}
+	let commandParameters: ProducerCommandParameters = new ProducerCommandParameters();
 </script>
 
+<GeneratorStandardInput commandParameters={commandParameters}></GeneratorStandardInput>
 <form>
 	<label for="header">Header</label>
-	<input id="header" bind:value={header} />
+	<input id="header" bind:value={commandParameters.header} />
 
 	<div class="messageHeader">
-		<label for="message">{isJsonMessage ? "JSON" : ""} Message</label>
+		<label for="message">{commandParameters.isJsonMessage ? "JSON" : ""} Message</label>
 		<div class="toggleDiv">
-			<Toggle label="JSON" bind:toggled={isJsonMessage} />
+			<Toggle label="JSON" bind:toggled={commandParameters.isJsonMessage} />
 		</div>
 	</div>
-	<textarea id="message" bind:value={message} />
+	<textarea id="message" bind:value={commandParameters.message} />
 </form>
-<button on:click={generate}> Generate </button>
+<button on:click={() => generator.generate(commandParameters)}> Generate </button>
 
 <style>
 	#message {
