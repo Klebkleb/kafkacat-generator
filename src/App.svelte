@@ -3,9 +3,9 @@
 	import Consumer from "./Consumer.svelte";
 	import Menu from "./Menu.svelte";
 	import { CommandParameters } from "./model/CommandParameters";
+	import { GenerationResult } from "./model/GenerationResult";
 
-	let response = "";
-	let errorMessage = "";
+	let result: GenerationResult
 	let infoMessage = "";
 
 	let menuOptions = ["Produce", "Consume"];
@@ -17,20 +17,28 @@
 		currentOption = menuOptions[event.detail];
 	}
 
+	function generationDone(event: {detail: GenerationResult; }) {
+		result = event.detail;
+		infoMessage = "";
+	}
+
 	function copy() {
-		navigator.clipboard.writeText(response).then(
-			function () {
-				infoMessage = "Copied to clipboard!";
-			},
-			function (e) {
-				console.log(e.message);
-				infoMessage = "Copy to clipboard failed :(";
-			}
-		);
+		if(result?.success) {
+			navigator.clipboard.writeText(result.message).then(
+				function () {
+					infoMessage = "Copied to clipboard!";
+				},
+				function (e) {
+					console.log(e.message);
+					infoMessage = "Copy to clipboard failed :(";
+				}
+			);
+		}
 	}
 
 	function clear() {
-		response = "";
+		result = null;
+		infoMessage = "";
 	}
 </script>
 
@@ -61,27 +69,27 @@
 		<input id="topic" bind:value={commandParameters.topic} />
 	</form>
 	{#if currentOption == "Produce"}
-		<Producer commandParameters={commandParameters} bind:response bind:errorMessage />
+		<Producer commandParameters={commandParameters} on:commandGenerated={generationDone}/>
 	{:else if currentOption == "Consume"}
-		<Consumer commandParameters={commandParameters} bind:response bind:errorMessage />
+		<Consumer commandParameters={commandParameters} on:commandGenerated={generationDone}/>
 	{/if}
-	{#if response}
+	{#if (result?.success)}
 		<div>
 			<h3>Message</h3>
 			<button on:click={copy}>Copy</button>
 			<button on:click={clear}>Clear</button>
 			<p>{infoMessage}</p>
 			<pre>
-  	<code>
-    	{response}
-  	</code>
-	</pre>
+				<code>
+					{result.message}
+				</code>
+			</pre>
 		</div>
 	{/if}
-	{#if errorMessage}
+	{#if (result && !result.success)}
 		<div>
 			<h3>Error</h3>
-			<p>{errorMessage}</p>
+			<p>{result.message}</p>
 			<button on:click={clear}>Clear</button>
 		</div>
 	{/if}

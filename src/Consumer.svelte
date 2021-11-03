@@ -2,10 +2,14 @@
 	import { is_empty } from "svelte/internal";
 	import { CommandParameters } from "./model/CommandParameters";
 	import Toggle from "./Toggle.svelte";
+	import { createEventDispatcher } from 'svelte';
+	import { GenerationResult } from "./model/GenerationResult";
 
 	export let commandParameters: CommandParameters;
-	export let response: string;
-	export let errorMessage = "";
+
+	const dispatch = createEventDispatcher();
+
+	let result: GenerationResult;
 
 	let formatResponse = true;
 	let showHeader = true;
@@ -17,18 +21,21 @@
 	let format = "";
 
 	function generate() {
+		result = new GenerationResult();
 		try {
 			let searchCommand = "";
 			if (searchTerm) {
 				searchCommand = ` | grep -B 1 -A 1 "${searchTerm}"`;
 			}
 			createFormatString();
-			response = `kafkacat -b ${commandParameters.ip}:${commandParameters.port} -t ${commandParameters.topic} -p 0 -o -${messageCount} -e ${format}${searchCommand}`;
+			result.message = `kafkacat -b ${commandParameters.ip}:${commandParameters.port} -t ${commandParameters.topic} -p 0 -o -${messageCount} -e ${format}${searchCommand}`;
+			result.success = true;
 		} catch (e) {
 			console.log(e);
-			errorMessage = e.message;
-			response = null;
+			result.message = e.message;
+			result.success = false;
 		}
+		dispatch('commandGenerated', result)
 	}
 
 	function createFormatString() {

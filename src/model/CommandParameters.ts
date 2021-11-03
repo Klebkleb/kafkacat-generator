@@ -1,5 +1,5 @@
 export class CommandParameters {
-    ip: string;
+    ip: string = "";
     port: number = 9092
-    topic: string;
+    topic: string = "";
 }

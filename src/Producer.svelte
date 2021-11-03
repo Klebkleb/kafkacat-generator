@@ -1,16 +1,20 @@
 <script lang="ts">
 	import { CommandParameters } from "./model/CommandParameters";
 	import Toggle from "./Toggle.svelte";
+	import { createEventDispatcher } from 'svelte';
+	import { GenerationResult } from "./model/GenerationResult";
 
 	export let commandParameters: CommandParameters;
-	export let response: string;
-	export let errorMessage = "";
 
+	const dispatch = createEventDispatcher();
+	
+	let result: GenerationResult;
 	let isJsonMessage = true;
 	let message = "";
 	let header = "";
 
 	function generate() {
+		result = new GenerationResult();
 		try {
 			let msg: string;
 			if(isJsonMessage) {
@@ -19,16 +23,18 @@
 			} else {
 				msg = message;
 			}
-			response = `echo '${msg}' | kafkacat -b ${commandParameters.ip}:${
+			result.message = `echo '${msg}' | kafkacat -b ${commandParameters.ip}:${
 				commandParameters.port
 			} -t ${commandParameters.topic} ${
 				header ? "-H type=" + header : ""
 			} -c 1 -P`;
+			result.success = true;
 		} catch (e) {
 			console.log(e);
-			errorMessage = e.message;
-			response = null;
+			result.message = e.message;
+			result.success = false;
 		}
+		dispatch('commandGenerated', result)
 	}
 </script>
 
