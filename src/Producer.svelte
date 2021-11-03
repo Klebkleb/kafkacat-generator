@@ -12,8 +12,13 @@
 
 	function generate() {
 		try {
-			let json = JSON.parse(message);
-			let msg = JSON.stringify(json);
+			let msg: string;
+			if(isJsonMessage) {
+				let json = JSON.parse(message);
+				msg = JSON.stringify(json);
+			} else {
+				msg = message;
+			}
 			response = `echo '${msg}' | kafkacat -b ${commandParameters.ip}:${
 				commandParameters.port
 			} -t ${commandParameters.topic} ${
