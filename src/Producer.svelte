@@ -1,15 +1,16 @@
-<script>
+<script lang="ts">
+	import { CommandParameters } from "./model/CommandParameters";
 	import Toggle from "./Toggle.svelte";
 
-	export let commandParameters;
-	export let response;
+	export let commandParameters: CommandParameters;
+	export let response: string;
 	export let errorMessage = "";
 
 	let isJsonMessage = true;
 	let message = "";
 	let header = "";
 
-	export function generate() {
+	function generate() {
 		try {
 			let json = JSON.parse(message);
 			let msg = JSON.stringify(json);

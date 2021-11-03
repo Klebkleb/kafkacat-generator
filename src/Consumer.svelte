@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
+	import { is_empty } from "svelte/internal";
+	import { CommandParameters } from "./model/CommandParameters";
 	import Toggle from "./Toggle.svelte";
 
-	export let commandParameters;
-	export let response;
+	export let commandParameters: CommandParameters;
+	export let response: string;
 	export let errorMessage = "";
 
 	let formatResponse = true;
@@ -14,7 +16,7 @@
 	let searchTerm = "";
 	let format = "";
 
-	export function generate() {
+	function generate() {
 		try {
 			let searchCommand = "";
 			if (searchTerm) {
@@ -62,12 +64,12 @@
 			<Toggle
 				label="Show timestamp"
 				bind:toggled={showTimestamp}
-				disabled={customFormat || !formatResponse}
+				disabled={!formatResponse || !is_empty(customFormat) }
 			/>
 			<Toggle
 				label="Show header"
 				bind:toggled={showHeader}
-				disabled={customFormat || !formatResponse}
+				disabled={!formatResponse || !is_empty(customFormat)}
 			/>
 			<label for="customFormat" class:disabled={!formatResponse}
 				>Custom format string (overrides timestamp and header toggles)</label

@@ -1,12 +1,12 @@
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	
-	export let options = []
+	export let options: string[] = [];
 	export let activeId = 0;
 	
 	const dispatch = createEventDispatcher();
 	
-	function select(id) {
+	function select(id: number) {
 		activeId = id;
 		dispatch('menuItemChanged', id);
 	}

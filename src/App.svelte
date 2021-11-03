@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
 	import Producer from "./Producer.svelte";
 	import Consumer from "./Consumer.svelte";
 	import Menu from "./Menu.svelte";
+	import { CommandParameters } from "./model/CommandParameters";
 
 	let response = "";
 	let errorMessage = "";
@@ -10,13 +11,9 @@
 	let menuOptions = ["Produce", "Consume"];
 	let currentOption = menuOptions[0];
 
-	let commandParameters = {
-		ip: "12.123.12.12",
-		port: 9092,
-		topic: "topic",
-	};
+	let commandParameters = new CommandParameters()
 
-	function menuOptionChanged(event) {
+	function menuOptionChanged(event: { detail: number; }) {
 		currentOption = menuOptions[event.detail];
 	}
 
@@ -34,7 +31,6 @@
 
 	function clear() {
 		response = "";
-		generated = false;
 	}
 </script>
 
@@ -65,9 +61,9 @@
 		<input id="topic" bind:value={commandParameters.topic} />
 	</form>
 	{#if currentOption == "Produce"}
-		<Producer {commandParameters} bind:response bind:errorMessage />
+		<Producer commandParameters={commandParameters} bind:response bind:errorMessage />
 	{:else if currentOption == "Consume"}
-		<Consumer {commandParameters} bind:response bind:errorMessage />
+		<Consumer commandParameters={commandParameters} bind:response bind:errorMessage />
 	{/if}
 	{#if response}
 		<div>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	export let round = true;
 	export let toggled = false;
 	export let label = "";
