@@ -35,4 +35,8 @@ export class ConsumerGenerationService extends GenerationService {
 		}
 	}
 
+	saveCommand(name: string, command: ConsumerCommandParameters) {
+		this.environmentStorage.getConsumeCommandStorage().saveItem(name, command)
+	}
+
 }
