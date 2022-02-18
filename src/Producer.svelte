@@ -4,8 +4,9 @@
 	import { ProducerCommandParameters } from "./model/ProducerCommandParameters";
 	import GeneratorStandardInput from "./GeneratorStandardInput.svelte";
 	import { ProducerGenerationService } from "./service/ProducerGenerationService";
+	import Container from "typedi";
 
-	const generator = new ProducerGenerationService();
+	const generator = Container.get(ProducerGenerationService)
 
 	let commandParameters: ProducerCommandParameters = new ProducerCommandParameters();
 </script>

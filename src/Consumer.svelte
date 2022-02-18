@@ -5,10 +5,11 @@
 	import { ConsumerCommandParameters } from "./model/ConsumerCommandParameters";
 	import { ConsumerGenerationService } from "./service/ConsumerGenerationService";
 	import GeneratorStandardInput from "./GeneratorStandardInput.svelte";
+	import Container from "typedi";
 
 	let commandParameters: ConsumerCommandParameters = new ConsumerCommandParameters();
 
-	const generator = new ConsumerGenerationService()
+	const generator = Container.get(ConsumerGenerationService)
 </script>
 
 

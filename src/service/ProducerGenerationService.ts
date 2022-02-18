@@ -1,7 +1,9 @@
+import { Service } from "typedi";
 import { GenerationResult } from "../model/GenerationResult";
 import type { ProducerCommandParameters } from "../model/ProducerCommandParameters";
 import { GenerationService } from "./GenerationService";
 
+@Service()
 export class ProducerGenerationService extends GenerationService {
 
     createCommandString(commandParameters: ProducerCommandParameters): GenerationResult {

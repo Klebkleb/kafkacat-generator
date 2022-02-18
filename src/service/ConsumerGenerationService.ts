@@ -1,7 +1,9 @@
+import { Service } from "typedi";
 import type { ConsumerCommandParameters } from "../model/ConsumerCommandParameters";
 import { GenerationResult } from "../model/GenerationResult";
 import { GenerationService } from "./GenerationService";
 
+@Service()
 export class ConsumerGenerationService extends GenerationService {
 
 
