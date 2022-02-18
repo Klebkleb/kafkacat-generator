@@ -9,11 +9,6 @@ export abstract class GenerationService {
     environmentStorage = Container.get(EnvironmentStorageService)
 
     abstract createCommandString(commandParameters: CommandParameters): GenerationResult
-    abstract saveCommand(name: string, command: CommandParameters)
-    
-    public saveEnv(name: string, environment: CommandParameters) {
-        this.environmentStorage.getEnvironmentStorage().saveItem(name, environment)
-    }
 
     public generate(commandParameters: CommandParameters) {
         this.dispatch(this.createCommandString(commandParameters))

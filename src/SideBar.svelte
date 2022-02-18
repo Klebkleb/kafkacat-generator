@@ -5,42 +5,74 @@ import Container from 'typedi';
 
     const envStorage = Container.get(EnvironmentStorageService)
 
-    let environments: string[];
+    let ipKeys: string[];
+    let topicKeys: string[];
 
     loadEnvs();
-    envStorage.getEnvironmentStorage().onListChange().subscribe((val) => {
-        console.log('getting')
-        environments = val;
+    envStorage.getIPStorage().onListChange().subscribe((newIpKeys) => {
+        ipKeys = newIpKeys;
+    })
+    envStorage.getTopicStorage().onListChange().subscribe((newTopicKeys) => {
+        topicKeys = newTopicKeys;
     })
 
     function loadEnvs() {
-        environments = envStorage.getEnvironmentStorage().loadKeys()
-        if(!environments) {
-            environments = [];
+        ipKeys = envStorage.getIPStorage().loadKeys()
+        if(!ipKeys) {
+            ipKeys = [];
+        }
+        topicKeys = envStorage.getTopicStorage().loadKeys()
+        if(!topicKeys) {
+            topicKeys = [];
         }
     }
 
-    function remove(name: string) {
-        envStorage.getEnvironmentStorage().deleteItem(name)
-        loadEnvs();
+    function loadIp(name: string) {
+        envStorage.getIPStorage().loadItem(name)
+    }
+
+    function loadTopic(name: string) {
+        envStorage.getTopicStorage().loadItem(name)
+    }
+
+    function removeIP(name: string) {
+        envStorage.getIPStorage().deleteItem(name)
+    }
+
+    function removeTopic(name: string) {
+        envStorage.getTopicStorage().deleteItem(name)
     }
 
 </script>
 
 <div>
     <h2>Sidebar</h2>
-    <h3>Envs</h3>
     <table>
         <tr>
-            <th>Environment</th>
+            <th>IPs</th>
             <th></th>
-            <th><button on:click={loadEnvs}>Reload</button></th>
+            <th></th>
         </tr>
-        {#each environments as env, i}
+        {#each ipKeys as ipKey, i}
         <tr>
-            <td>{env}</td>
-            <td>load</td>
-            <td><button on:click={() => remove("test")}>Delete</button></td>
+            <td>{ipKey}</td>
+            <td><button on:click={() => loadIp(ipKey)}>Load</button></td>
+            <td><button on:click={() => removeIP(ipKey)}>Delete</button></td>
+        </tr>
+        {/each}
+    </table>
+
+    <table>
+        <tr>
+            <th>Topics</th>
+            <th></th>
+            <th></th>
+        </tr>
+        {#each topicKeys as topicKey, i}
+        <tr>
+            <td>{topicKey}</td>
+            <td><button on:click={() => loadTopic(topicKey)}>Load</button></td>
+            <td><button on:click={() => removeTopic(topicKey)}>Delete</button></td>
         </tr>
         {/each}
     </table>

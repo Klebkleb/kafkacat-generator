@@ -8,12 +8,15 @@ import { Service } from "typedi";
 class BaseStorageService<T> {
     static readonly LIST_KEY = "LIST"
     prefix: String;
-    observer: Subscriber<string[]>;
+    private listObserver: Subscriber<string[]>;
     private listObservable: Observable<string[]>;
+    private loadObserver: Subscriber<T>;
+    private loadObservable: Observable<T>;
 
     constructor(prefix: String) {
         this.prefix = prefix;
-        this.listObservable = new Observable(observer => this.observer = observer)
+        this.listObservable = new Observable(observer => this.listObserver = observer)
+        this.loadObservable = new Observable(observer => this.loadObserver = observer)
     }
 
     loadKeys(): string[] {
@@ -23,7 +26,9 @@ class BaseStorageService<T> {
     }
 
     loadItem(name: string): T {
-        return ls.get<T>(this.keyFromName(name))
+        let item = ls.get<T>(this.keyFromName(name))
+        this.loadObserver.next(item);
+        return item;
     }
 
     saveItem(name: string, item: T) {
@@ -31,7 +36,7 @@ class BaseStorageService<T> {
         ls.set<T>(key, item)
         let newKeys = this.loadKeys().concat(name)
         ls.set<string[]>(this.listName(), newKeys)
-        this.observer.next(newKeys)
+        this.listObserver.next(newKeys)
     }
 
     deleteItem(name: string) {
@@ -39,11 +44,15 @@ class BaseStorageService<T> {
         ls.remove(key)
         let newKeys = this.removeFromArray(this.loadKeys(), name)
         ls.set<string[]>(this.listName(), newKeys)
-        this.observer.next(newKeys)
+        this.listObserver.next(newKeys)
     }
 
     onListChange(): Observable<string[]> {
         return this.listObservable
+    }
+
+    onLoad(): Observable<T> {
+        return this.loadObservable
     }
 
     private keyFromName(name: string) {
@@ -67,18 +76,24 @@ class BaseStorageService<T> {
 
 @Service()
 export class EnvironmentStorageService {
-    private environmentStorage: BaseStorageService<CommandParameters>
+    private ipStorage: BaseStorageService<string>
+    private topicStorage: BaseStorageService<string>
     private produceCommandStorage: BaseStorageService<ProducerCommandParameters>
     private consumeCommandStorage: BaseStorageService<ConsumerCommandParameters>
 
     constructor() {
-        this.environmentStorage = new BaseStorageService<CommandParameters>("ENV")
+        this.ipStorage = new BaseStorageService<string>("IP")
+        this.topicStorage = new BaseStorageService<string>("TOPIC")
         this.produceCommandStorage = new BaseStorageService<ProducerCommandParameters>("PRODUCE_COMMAND")
         this.consumeCommandStorage = new BaseStorageService<ConsumerCommandParameters>("CONSUME_COMMAND")
     }
 
-    getEnvironmentStorage() {
-        return this.environmentStorage;
+    getIPStorage() {
+        return this.ipStorage;
+    }
+
+    getTopicStorage() {
+        return this.topicStorage;
     }
 
     getProduceCommandStorage() {

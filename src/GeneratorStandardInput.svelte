@@ -8,19 +8,27 @@
 
     let environmentStorage = Container.get(EnvironmentStorageService)
 
-    let currentName: string
+    environmentStorage.getIPStorage().onLoad().subscribe(ip => {
+        let split = ip.split(':', 2)
+        commandParameters.ip = split[0]
+        commandParameters.port = Number.parseInt(split[1])
+    })
 
-    function save() {
-        environmentStorage.getEnvironmentStorage().saveItem(currentName, commandParameters)
+    environmentStorage.getTopicStorage().onLoad().subscribe(topic => {
+        commandParameters.topic = topic;
+    })
+
+    function saveIP() {
+        let formatted = commandParameters.ip + ":" + commandParameters.port
+        environmentStorage.getIPStorage().saveItem(formatted, formatted)
+    }
+
+    function saveTopic() {
+        environmentStorage.getTopicStorage().saveItem(commandParameters.topic, commandParameters.topic)
     }
 </script>
 
 <h3>Input</h3>
-<form>
-    <label for='name'>Name</label>
-    <input type='text' bind:value={currentName}>
-</form>
-<button on:click={save}> Save</button>
 <form>
     <label for="ip">IP</label>
     <input id="ip" bind:value={commandParameters.ip} />:<input
@@ -28,7 +36,9 @@
         type="number"
         bind:value={commandParameters.port}
     />
+    <button on:click={saveIP}> Save</button>
 
     <label for="topic">Topic</label>
     <input id="topic" bind:value={commandParameters.topic} />
+    <button on:click={saveTopic}> Save</button>
 </form>

@@ -29,8 +29,4 @@ export class ProducerGenerationService extends GenerationService {
 		}
 		return result;
     }
-
-	saveCommand(name: string, command: ProducerCommandParameters) {
-		this.environmentStorage.getProduceCommandStorage().saveItem(name, command)
-	}
 }
