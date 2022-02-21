@@ -4,7 +4,7 @@
 	import Menu from "./component/Menu.svelte";
 	import type { GenerationResult } from "./model/GenerationResult";
 	import GeneratorResult from "./component/GeneratorResult.svelte";
-	import SideBar from "./component/SideBar.svelte";
+	import SideBar from "./component/sidebar/SideBar.svelte";
 
 	let menuOptions = ["Produce", "Consume"];
 	let currentOption = menuOptions[0];
