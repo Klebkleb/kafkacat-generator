@@ -1,9 +1,9 @@
 <script lang="ts">
 
 	import Toggle from "./Toggle.svelte";
-	import { ProducerCommandParameters } from "./model/ProducerCommandParameters";
+	import { ProducerCommandParameters } from "../model/ProducerCommandParameters";
 	import GeneratorStandardInput from "./GeneratorStandardInput.svelte";
-	import { ProducerGenerationService } from "./service/ProducerGenerationService";
+	import { ProducerGenerationService } from "../service/ProducerGenerationService";
 	import Container from "typedi";
 
 	const generator = Container.get(ProducerGenerationService)

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Producer from "./Producer.svelte";
-	import Consumer from "./Consumer.svelte";
-	import Menu from "./Menu.svelte";
+	import Producer from "./component/Producer.svelte";
+	import Consumer from "./component/Consumer.svelte";
+	import Menu from "./component/Menu.svelte";
 	import type { GenerationResult } from "./model/GenerationResult";
-	import GeneratorResult from "./GeneratorResult.svelte";
-	import SideBar from "./SideBar.svelte";
+	import GeneratorResult from "./component/GeneratorResult.svelte";
+	import SideBar from "./component/SideBar.svelte";
 
 	let menuOptions = ["Produce", "Consume"];
 	let currentOption = menuOptions[0];

@@ -2,8 +2,8 @@
 	import { is_empty } from "svelte/internal";
 
 	import Toggle from "./Toggle.svelte";
-	import { ConsumerCommandParameters } from "./model/ConsumerCommandParameters";
-	import { ConsumerGenerationService } from "./service/ConsumerGenerationService";
+	import { ConsumerCommandParameters } from "../model/ConsumerCommandParameters";
+	import { ConsumerGenerationService } from "../service/ConsumerGenerationService";
 	import GeneratorStandardInput from "./GeneratorStandardInput.svelte";
 	import Container from "typedi";
 

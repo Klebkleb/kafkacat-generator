@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GenerationResult } from "./model/GenerationResult";
+	import type { GenerationResult } from "../model/GenerationResult";
 
     let result: GenerationResult
     let infoMessage = "";

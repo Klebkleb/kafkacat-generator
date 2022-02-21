@@ -1,8 +1,8 @@
 <script lang="ts">
     import Container from "typedi";
 
-    import type { CommandParameters } from "./model/CommandParameters";
-    import { EnvironmentStorageService } from "./service/EnvironmentStorageService";
+    import type { CommandParameters } from "../model/CommandParameters";
+    import { EnvironmentStorageService } from "../service/EnvironmentStorageService";
 
     export let commandParameters: CommandParameters
 

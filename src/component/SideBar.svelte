@@ -1,7 +1,7 @@
 <script lang="ts">
-import Container from 'typedi';
-
-    import { EnvironmentStorageService } from './service/EnvironmentStorageService';
+    import Container from 'typedi';
+    import Icon from './Icon.svelte';
+    import { EnvironmentStorageService } from '../service/EnvironmentStorageService';
 
     const envStorage = Container.get(EnvironmentStorageService)
 
@@ -52,12 +52,14 @@ import Container from 'typedi';
             <th>IPs</th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
         {#each ipKeys as ipKey, i}
         <tr>
             <td>{ipKey}</td>
             <td><button on:click={() => loadIp(ipKey)}>Load</button></td>
-            <td><button on:click={() => removeIP(ipKey)}>Delete</button></td>
+            <td><button on:click={() => removeIP(ipKey)}><Icon name="edit"></Icon></button></td>
+            <td><button on:click={() => removeIP(ipKey)}><Icon name="remove"></Icon></button></td>
         </tr>
         {/each}
     </table>
@@ -67,12 +69,14 @@ import Container from 'typedi';
             <th>Topics</th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
         {#each topicKeys as topicKey, i}
         <tr>
             <td>{topicKey}</td>
             <td><button on:click={() => loadTopic(topicKey)}>Load</button></td>
-            <td><button on:click={() => removeTopic(topicKey)}>Delete</button></td>
+            <td><button on:click={() => removeTopic(topicKey)}><Icon name="edit"></Icon></button></td>
+            <td><button on:click={() => removeTopic(topicKey)}><Icon name="remove"></Icon></button></td>
         </tr>
         {/each}
     </table>
