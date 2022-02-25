@@ -47,6 +47,11 @@ class BaseStorageService<T> {
         this.listObserver.next(newKeys)
     }
 
+    updateItem(name: string, newName: string, item: T) {
+        this.deleteItem(name);
+        this.saveItem(newName, item);
+    }
+
     onListChange(): Observable<string[]> {
         return this.listObservable
     }

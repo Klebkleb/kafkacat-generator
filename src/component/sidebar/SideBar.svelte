@@ -1,5 +1,6 @@
 <script lang="ts">
     import Container from 'typedi';
+    import type { SideBarUpdateEvent } from '../../model/SideBarUpdateEvent';
     import { EnvironmentStorageService } from '../../service/EnvironmentStorageService';
     import SideBarItem from './SideBarItem.svelte';
 
@@ -27,12 +28,12 @@
         }
     }
 
-    function loadIp(name: string) {
-        envStorage.getIPStorage().loadItem(name)
+    function loadIp(name: string): string {
+        return envStorage.getIPStorage().loadItem(name)
     }
 
-    function loadTopic(name: string) {
-        envStorage.getTopicStorage().loadItem(name)
+    function loadTopic(name: string): string {
+        return envStorage.getTopicStorage().loadItem(name)
     }
 
     function removeIP(name: string) {
@@ -43,6 +44,14 @@
         envStorage.getTopicStorage().deleteItem(name)
     }
 
+    function editIp(event: CustomEvent<SideBarUpdateEvent>) {
+        envStorage.getIPStorage().updateItem(event.detail.name, event.detail.updatedName, event.detail.value);
+    }
+
+    function editTopic(event: CustomEvent<SideBarUpdateEvent>) {
+        envStorage.getTopicStorage().updateItem(event.detail.name, event.detail.updatedName, event.detail.value);
+    }
+
 </script>
 
 <div>
@@ -51,7 +60,9 @@
     {#each ipKeys as ipKey}
     <SideBarItem 
         name={ipKey} 
+        value={loadIp(ipKey)}
         on:open={() => loadIp(ipKey)}
+        on:edit={editIp}
         on:remove={() => removeIP(ipKey)}>
     </SideBarItem>
     {/each}
@@ -60,7 +71,9 @@
     {#each topicKeys as topicKey}
     <SideBarItem 
         name={topicKey} 
+        value={loadTopic(topicKey)}
         on:open={() => loadTopic(topicKey)}
+        on:edit={editTopic}
         on:remove={() => removeTopic(topicKey)}>
     </SideBarItem>
     {/each}

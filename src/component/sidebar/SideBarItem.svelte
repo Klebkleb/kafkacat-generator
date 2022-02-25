@@ -1,21 +1,38 @@
 <script lang="ts">
     import Icon from "../Icon.svelte";
     import { createEventDispatcher } from 'svelte';
+    import NameModal from './NameModal.svelte';
+	import Modal, { bind } from 'svelte-simple-modal';
+    import { writable } from 'svelte/store';
+    import type { SideBarUpdateEvent } from "../../model/SideBarUpdateEvent";
+    
+    const modal = writable(null);
 
     export let name: string;
+    export let value: string;
 
     const dispatch = createEventDispatcher();
 
+    const onOkay = (event: SideBarUpdateEvent) => {
+        dispatch("edit", event)
+	}
+
+    const showModal = () => modal.set(bind(NameModal, { name: name, value: value, onOkay }));
+
     function click(action: string) {
-		dispatch(action, {
-			name: name
-		});
+		dispatch(action)
 	}
 </script>
 
+<Modal show={$modal}></Modal>
 <div class='itemContainer'>
-    <div class='name' on:click={() => click("open")}>{name}</div>
-    <div class='edit button'><Icon name='edit' size='1.2em' on:clicked={() => click("edit")}></Icon></div>
+    <div on:click={() => click("open")}>
+        <div class='name'>{name}</div>
+        {#if name != value}
+        <div class='value'>{value}</div>
+        {/if}
+    </div>
+    <div class='edit button'><Icon name='edit' size='1.2em' on:clicked={showModal}></Icon></div>
     <div class='delete button'><Icon name='remove' size='1.2em' on:clicked={() => click("remove")}></Icon></div>
 </div>
 
@@ -38,9 +55,14 @@
         cursor: pointer;
     }
 
-    .name {
+    .name, .value{
         text-align: left;
         margin-left: 1em;
+    }
+
+    .value {
+        font-size: 0.75em;
+        color: darkgray;
     }
 
     .button {
