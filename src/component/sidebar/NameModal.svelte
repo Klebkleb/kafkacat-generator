@@ -15,8 +15,20 @@
 	}
 </script>
 
-<label for='name'>Name</label>
-<input id='name' type="text" bind:value={newName} on:keydown={e => e.key === 'Enter' && save()}>
-<label for='value'>Value</label>
-<input id='value' type="text" bind:value={value} on:keydown={e => e.key === 'Enter' && save()}>
-<button on:click={save}>Save</button>
+<div class='form'>
+  <h4>Edit value</h4>
+  <label for='name'>Name</label>
+  <input id='name' type="text" bind:value={newName} on:keydown={e => e.key === 'Enter' && save()}>
+  <label for='value'>Value</label>
+  <input id='value' type="text" bind:value={value} on:keydown={e => e.key === 'Enter' && save()}>
+  <button on:click={save}>Save</button>
+</div>
+
+<style>
+ .form {
+   text-align: left;
+   display: inline-flex;
+   flex-direction: column;
+   width: 100%;
+ }
+</style>
