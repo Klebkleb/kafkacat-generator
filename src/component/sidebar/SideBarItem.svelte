@@ -53,11 +53,13 @@
 		background-color:hsl(240, 8%, 93%);
 		color: #333;
         cursor: pointer;
+        padding-top: 8px;
+        padding-bottom: 8px;
     }
 
     .name, .value{
         text-align: left;
-        margin-left: 1em;
+        margin-left: 16px;
     }
 
     .value {

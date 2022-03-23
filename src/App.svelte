@@ -24,7 +24,14 @@
 
 <div class="main">
 	<div class="sidebar left">
-		<h3>About</h3>
+		<h2>Github</h2>
+		<p>
+			This project is open source.<br/>
+			Github: <a href='https://github.com/Klebkleb/kafkacat-generator'>klebkleb/kafkacat-generator</a>
+		</p>
+		<p>
+			If you would like extra features or if you found an issue, feel free to open a PR ;)
+		</p>
 	</div>
 	<div class="content">
 		<h1>Kafkacat command generator</h1>
@@ -66,14 +73,21 @@
 		align-self: center;
 	}
 
+	.sidebar {
+		max-width: 300px;
+	}
+
 	.sidebar.right {
 		padding-right: 2em;
 		text-align: right;
+		margin-left: 50px;
 	}
 
 	.sidebar.left {
+		justify-self: right;
 		padding-left: 2em;
 		text-align: left;
+		margin-right: 50px;
 	}
 
 	

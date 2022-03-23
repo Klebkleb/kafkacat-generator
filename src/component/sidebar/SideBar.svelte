@@ -1,5 +1,6 @@
 <script lang="ts">
-    import Container from 'typedi';
+    import { isEmpty } from 'rxjs';
+import Container from 'typedi';
     import type { SideBarUpdateEvent } from '../../model/SideBarUpdateEvent';
     import { EnvironmentStorageService } from '../../service/EnvironmentStorageService';
     import SideBarItem from './SideBarItem.svelte';
@@ -54,8 +55,8 @@
 
 </script>
 
-<div>
-    <h2>Sidebar</h2>
+<div class='sidebar'>
+    <h2>Storage</h2>
     <h3>IPs</h3>
     {#each ipKeys as ipKey}
     <SideBarItem 
@@ -66,6 +67,12 @@
         on:remove={() => removeIP(ipKey)}>
     </SideBarItem>
     {/each}
+    {#if ipKeys.length == 0}
+    <div class='empty'>
+        <h4>There's nothing here</h4>
+        <p>Save an IP address by pressing the save button next to the input field</p>
+    </div>
+    {/if}
 
     <h3>Topics</h3>
     {#each topicKeys as topicKey}
@@ -77,4 +84,21 @@
         on:remove={() => removeTopic(topicKey)}>
     </SideBarItem>
     {/each}
+    {#if topicKeys.length == 0}
+    <div class='empty'>
+        <h4>There's nothing here</h4>
+        <p>Save a topic by pressing the save button next to the input field</p>
+    </div>
+    {/if}
 </div>
+
+<style>
+    .empty {
+        color: darkgray;
+        font-style: italic;
+    }
+
+    .empty h4 {
+        margin-bottom: 0;
+    }
+</style>
