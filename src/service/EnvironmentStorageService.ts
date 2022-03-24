@@ -1,5 +1,4 @@
 import * as ls from "local-storage";
-import type { CommandParameters } from "../model/CommandParameters";
 import type { ConsumerCommandParameters } from "../model/ConsumerCommandParameters";
 import type { ProducerCommandParameters } from "../model/ProducerCommandParameters";
 import { Observable, Subscriber } from 'rxjs';
@@ -27,7 +26,8 @@ class BaseStorageService<T> {
 
     loadItem(name: string): T {
         let item = ls.get<T>(this.keyFromName(name))
-        this.loadObserver.next(item);
+        if(this.loadObserver)
+            this.loadObserver.next(item);
         return item;
     }
 

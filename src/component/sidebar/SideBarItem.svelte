@@ -40,7 +40,6 @@
     .itemContainer {
         display: inline-grid;
         grid-template-columns: auto 1.2em 1.2em;
-        grid-template-rows: 32px;
         column-gap: 8px;
         width: 100%;
         align-items: center;
@@ -64,6 +63,8 @@
 
     .value {
         font-size: 0.75em;
+        white-space: pre;
+        font-family: monospace;
         color: darkgray;
     }
 

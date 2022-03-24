@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { isEmpty } from 'rxjs';
-import Container from 'typedi';
+    import Container from 'typedi';
+import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParameters';
     import type { SideBarUpdateEvent } from '../../model/SideBarUpdateEvent';
     import { EnvironmentStorageService } from '../../service/EnvironmentStorageService';
     import SideBarItem from './SideBarItem.svelte';
@@ -9,6 +9,7 @@ import Container from 'typedi';
 
     let ipKeys: string[];
     let topicKeys: string[];
+    let consumerCommandHistoryKeys: string[];
 
     loadEnvs();
     envStorage.getIPStorage().onListChange().subscribe((newIpKeys) => {
@@ -16,6 +17,9 @@ import Container from 'typedi';
     })
     envStorage.getTopicStorage().onListChange().subscribe((newTopicKeys) => {
         topicKeys = newTopicKeys;
+    })
+    envStorage.getConsumeCommandStorage().onListChange().subscribe((newConsumerCommandKeys) => {
+        consumerCommandHistoryKeys = newConsumerCommandKeys;
     })
 
     function loadEnvs() {
@@ -27,6 +31,10 @@ import Container from 'typedi';
         if(!topicKeys) {
             topicKeys = [];
         }
+        consumerCommandHistoryKeys = envStorage.getConsumeCommandStorage().loadKeys()
+        if(!consumerCommandHistoryKeys) {
+            consumerCommandHistoryKeys = [];
+        }
     }
 
     function loadIp(name: string): string {
@@ -37,6 +45,10 @@ import Container from 'typedi';
         return envStorage.getTopicStorage().loadItem(name)
     }
 
+    function loadConsumerCommand(name: string): ConsumerCommandParameters {
+        return envStorage.getConsumeCommandStorage().loadItem(name)
+    }
+
     function removeIP(name: string) {
         envStorage.getIPStorage().deleteItem(name)
     }
@@ -45,12 +57,29 @@ import Container from 'typedi';
         envStorage.getTopicStorage().deleteItem(name)
     }
 
+    function removeConsumerCommand(name: string) {
+        envStorage.getConsumeCommandStorage().deleteItem(name)
+    }
+
     function editIp(event: CustomEvent<SideBarUpdateEvent>) {
         envStorage.getIPStorage().updateItem(event.detail.name, event.detail.updatedName, event.detail.value);
     }
 
     function editTopic(event: CustomEvent<SideBarUpdateEvent>) {
         envStorage.getTopicStorage().updateItem(event.detail.name, event.detail.updatedName, event.detail.value);
+    }
+
+    function replacer(key,value)
+    {
+       if( 
+            key == "formatResponse" ||
+            key == "showHeader" ||
+            key == "showTimestamp" ||
+            key == "isJsonMessage" ||
+            !value
+       ) {
+           return undefined
+       } else return value;
     }
 
 </script>
@@ -88,6 +117,22 @@ import Container from 'typedi';
     <div class='empty'>
         <h4>There's nothing here</h4>
         <p>Save a topic by pressing the save button next to the input field</p>
+    </div>
+    {/if}
+
+    <h3>Commands</h3>
+    {#each consumerCommandHistoryKeys as consumerCommandKey}
+    <SideBarItem 
+        name={consumerCommandKey} 
+        value={JSON.stringify(loadConsumerCommand(consumerCommandKey), replacer, 2)}
+        on:open={() => loadConsumerCommand(consumerCommandKey)}
+        on:remove={() => removeConsumerCommand(consumerCommandKey)}>
+    </SideBarItem>
+    {/each}
+    {#if consumerCommandHistoryKeys.length == 0}
+    <div class='empty'>
+        <h4>There's nothing here</h4>
+        <p>Commands will appear automagically when you generate them.</p>
     </div>
     {/if}
 </div>
