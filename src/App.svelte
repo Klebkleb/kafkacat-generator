@@ -55,7 +55,7 @@
 		<GeneratorResult bind:this={resultContainer}></GeneratorResult>
 	</div>
 	<div class="sidebar right">
-		<SideBar></SideBar>
+		<SideBar currentOption={currentOption}></SideBar>
 	</div>
 </div>
 

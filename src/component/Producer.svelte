@@ -5,10 +5,24 @@
 	import GeneratorStandardInput from "./GeneratorStandardInput.svelte";
 	import { ProducerGenerationService } from "../service/ProducerGenerationService";
 	import Container from "typedi";
+	import { EnvironmentStorageService } from "../service/EnvironmentStorageService";
 
 	const generator = Container.get(ProducerGenerationService)
 
 	let commandParameters: ProducerCommandParameters = new ProducerCommandParameters();
+
+	let environmentStorage = Container.get(EnvironmentStorageService)
+
+	function generate() {
+		generator.generate(commandParameters);
+		let now = new Date();
+		let key = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+		environmentStorage.getProduceCommandStorage().saveItem(key, commandParameters)
+	}
+
+	environmentStorage.getProduceCommandStorage().onLoad().subscribe(produceCommand => {
+		commandParameters = produceCommand;
+	})
 </script>
 
 <GeneratorStandardInput commandParameters={commandParameters}></GeneratorStandardInput>
@@ -24,7 +38,7 @@
 	</div>
 	<textarea id="message" bind:value={commandParameters.message} />
 </form>
-<button on:click={() => generator.generate(commandParameters)}> Generate </button>
+<button on:click={generate}> Generate </button>
 
 <style>
 	#message {

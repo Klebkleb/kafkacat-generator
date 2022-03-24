@@ -24,9 +24,9 @@ class BaseStorageService<T> {
         return list
     }
 
-    loadItem(name: string): T {
+    loadItem(name: string, broadCast = true): T {
         let item = ls.get<T>(this.keyFromName(name))
-        if(this.loadObserver)
+        if(this.loadObserver && broadCast)
             this.loadObserver.next(item);
         return item;
     }
@@ -34,7 +34,8 @@ class BaseStorageService<T> {
     saveItem(name: string, item: T) {
         let key = this.keyFromName(name)
         ls.set<T>(key, item)
-        let newKeys = this.loadKeys().concat(name)
+        let newKeys = this.loadKeys()
+        newKeys.unshift(name)
         ls.set<string[]>(this.listName(), newKeys)
         this.listObserver.next(newKeys)
     }
@@ -42,14 +43,25 @@ class BaseStorageService<T> {
     deleteItem(name: string) {
         let key = this.keyFromName(name)
         ls.remove(key)
-        let newKeys = this.removeFromArray(this.loadKeys(), name)
+        let keys = this.loadKeys()
+        console.log(keys)
+        let newKeys = this.removeFromArray(keys, name)
+        console.log(newKeys)
         ls.set<string[]>(this.listName(), newKeys)
         this.listObserver.next(newKeys)
     }
 
     updateItem(name: string, newName: string, item: T) {
-        this.deleteItem(name);
-        this.saveItem(newName, item);
+        let key = this.keyFromName(name)
+        let keys = this.loadKeys()
+        let idx = keys.indexOf(name)
+        if(idx > -1) {
+            keys.splice(idx, 1, newName)
+        }
+        ls.remove(key)
+        ls.set<T>(this.keyFromName(newName), item)
+        ls.set<string[]>(this.listName(), keys)
+        this.listObserver.next(keys)
     }
 
     onListChange(): Observable<string[]> {
@@ -68,14 +80,14 @@ class BaseStorageService<T> {
         return `${this.prefix}_${BaseStorageService.LIST_KEY}`
     }
 
-    private removeFromArray(array: string[], key: string) {
+    private removeFromArray(array: string[], key: string): string[] {
         let idx = array.indexOf(key)
-        if(idx == 0) {
+        if(idx === 0) {
             array.shift()
         } else {
-            array.splice(idx)
+            array.splice(idx, 1)
         }
-        return array;
+        return array
     }
 }
 

@@ -1,15 +1,19 @@
 <script lang="ts">
     import Container from 'typedi';
-import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParameters';
+    import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParameters';
+    import type { ProducerCommandParameters } from '../../model/ProducerCommandParameters';
     import type { SideBarUpdateEvent } from '../../model/SideBarUpdateEvent';
     import { EnvironmentStorageService } from '../../service/EnvironmentStorageService';
     import SideBarItem from './SideBarItem.svelte';
+
+    export let currentOption: String
 
     const envStorage = Container.get(EnvironmentStorageService)
 
     let ipKeys: string[];
     let topicKeys: string[];
     let consumerCommandHistoryKeys: string[];
+    let producerCommandHistoryKeys: string[];
 
     loadEnvs();
     envStorage.getIPStorage().onListChange().subscribe((newIpKeys) => {
@@ -20,6 +24,9 @@ import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParam
     })
     envStorage.getConsumeCommandStorage().onListChange().subscribe((newConsumerCommandKeys) => {
         consumerCommandHistoryKeys = newConsumerCommandKeys;
+    })
+    envStorage.getProduceCommandStorage().onListChange().subscribe((newProduceCommandKeys) => {
+        producerCommandHistoryKeys = newProduceCommandKeys;
     })
 
     function loadEnvs() {
@@ -35,18 +42,26 @@ import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParam
         if(!consumerCommandHistoryKeys) {
             consumerCommandHistoryKeys = [];
         }
+        producerCommandHistoryKeys = envStorage.getProduceCommandStorage().loadKeys()
+        if(!producerCommandHistoryKeys) {
+            producerCommandHistoryKeys = [];
+        }
     }
 
-    function loadIp(name: string): string {
-        return envStorage.getIPStorage().loadItem(name)
+    function loadIp(name: string, broadCast = true): string {
+        return envStorage.getIPStorage().loadItem(name, broadCast)
     }
 
-    function loadTopic(name: string): string {
-        return envStorage.getTopicStorage().loadItem(name)
+    function loadTopic(name: string, broadCast = true): string {
+        return envStorage.getTopicStorage().loadItem(name, broadCast)
     }
 
-    function loadConsumerCommand(name: string): ConsumerCommandParameters {
-        return envStorage.getConsumeCommandStorage().loadItem(name)
+    function loadConsumerCommand(name: string, broadCast = true): ConsumerCommandParameters {
+        return envStorage.getConsumeCommandStorage().loadItem(name, broadCast)
+    }
+
+    function loadProducerCommand(name: string, broadCast = true): ProducerCommandParameters {
+        return envStorage.getProduceCommandStorage().loadItem(name, broadCast)
     }
 
     function removeIP(name: string) {
@@ -59,6 +74,10 @@ import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParam
 
     function removeConsumerCommand(name: string) {
         envStorage.getConsumeCommandStorage().deleteItem(name)
+    }
+
+    function removeProducerCommand(name: string) {
+        envStorage.getProduceCommandStorage().deleteItem(name)
     }
 
     function editIp(event: CustomEvent<SideBarUpdateEvent>) {
@@ -90,7 +109,7 @@ import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParam
     {#each ipKeys as ipKey}
     <SideBarItem 
         name={ipKey} 
-        value={loadIp(ipKey)}
+        value={loadIp(ipKey, false)}
         on:open={() => loadIp(ipKey)}
         on:edit={editIp}
         on:remove={() => removeIP(ipKey)}>
@@ -107,7 +126,7 @@ import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParam
     {#each topicKeys as topicKey}
     <SideBarItem 
         name={topicKey} 
-        value={loadTopic(topicKey)}
+        value={loadTopic(topicKey, false)}
         on:open={() => loadTopic(topicKey)}
         on:edit={editTopic}
         on:remove={() => removeTopic(topicKey)}>
@@ -120,20 +139,37 @@ import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParam
     </div>
     {/if}
 
-    <h3>Commands</h3>
-    {#each consumerCommandHistoryKeys as consumerCommandKey}
-    <SideBarItem 
-        name={consumerCommandKey} 
-        value={JSON.stringify(loadConsumerCommand(consumerCommandKey), replacer, 2)}
-        on:open={() => loadConsumerCommand(consumerCommandKey)}
-        on:remove={() => removeConsumerCommand(consumerCommandKey)}>
-    </SideBarItem>
-    {/each}
-    {#if consumerCommandHistoryKeys.length == 0}
-    <div class='empty'>
-        <h4>There's nothing here</h4>
-        <p>Commands will appear automagically when you generate them.</p>
-    </div>
+    <h3>{currentOption} Command History</h3>
+    {#if currentOption == "Consume"}
+        {#each consumerCommandHistoryKeys as consumerCommandKey}
+        <SideBarItem 
+            name={consumerCommandKey} 
+            value={JSON.stringify(loadConsumerCommand(consumerCommandKey, false), replacer, 2)}
+            on:open={() => loadConsumerCommand(consumerCommandKey)}
+            on:remove={() => removeConsumerCommand(consumerCommandKey)}>
+        </SideBarItem>
+        {/each}
+        {#if consumerCommandHistoryKeys.length == 0}
+        <div class='empty'>
+            <h4>There's nothing here</h4>
+            <p>Commands will appear automagically when you generate them.</p>
+        </div>
+        {/if}
+    {:else if currentOption == "Produce"}
+        {#each producerCommandHistoryKeys as producerCommandKey}
+        <SideBarItem 
+            name={producerCommandKey} 
+            value={JSON.stringify(loadProducerCommand(producerCommandKey, false), replacer, 2)}
+            on:open={() => loadProducerCommand(producerCommandKey)}
+            on:remove={() => removeProducerCommand(producerCommandKey)}>
+        </SideBarItem>
+        {/each}
+        {#if producerCommandHistoryKeys.length == 0}
+        <div class='empty'>
+            <h4>There's nothing here</h4>
+            <p>Commands will appear automagically when you generate them.</p>
+        </div>
+        {/if}
     {/if}
 </div>
 
