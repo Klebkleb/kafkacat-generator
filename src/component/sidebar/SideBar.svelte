@@ -145,6 +145,7 @@
         <SideBarItem 
             name={consumerCommandKey} 
             value={JSON.stringify(loadConsumerCommand(consumerCommandKey, false), replacer, 2)}
+            noEdit={true}
             on:open={() => loadConsumerCommand(consumerCommandKey)}
             on:remove={() => removeConsumerCommand(consumerCommandKey)}>
         </SideBarItem>
@@ -160,6 +161,7 @@
         <SideBarItem 
             name={producerCommandKey} 
             value={JSON.stringify(loadProducerCommand(producerCommandKey, false), replacer, 2)}
+            noEdit={true}
             on:open={() => loadProducerCommand(producerCommandKey)}
             on:remove={() => removeProducerCommand(producerCommandKey)}>
         </SideBarItem>

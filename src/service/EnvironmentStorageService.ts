@@ -7,13 +7,15 @@ import { Service } from "typedi";
 class BaseStorageService<T> {
     static readonly LIST_KEY = "LIST"
     prefix: String;
+    maxSize: number;
     private listObserver: Subscriber<string[]>;
     private listObservable: Observable<string[]>;
     private loadObserver: Subscriber<T>;
     private loadObservable: Observable<T>;
 
-    constructor(prefix: String) {
+    constructor(prefix: String, maxSize = -1) {
         this.prefix = prefix;
+        this.maxSize = maxSize
         this.listObservable = new Observable(observer => this.listObserver = observer)
         this.loadObservable = new Observable(observer => this.loadObserver = observer)
     }
@@ -36,6 +38,14 @@ class BaseStorageService<T> {
         ls.set<T>(key, item)
         let newKeys = this.loadKeys()
         newKeys.unshift(name)
+        if(this.maxSize > -1 && newKeys.length > this.maxSize) {
+            let modifiedKeys = Object.assign([], newKeys)
+            console.log(modifiedKeys)
+            for(let i = this.maxSize; i < newKeys.length; i++) {
+                modifiedKeys = this.deleteFromStorage(modifiedKeys, newKeys[i])
+            }
+            newKeys = modifiedKeys
+        }
         ls.set<string[]>(this.listName(), newKeys)
         this.listObserver.next(newKeys)
     }
@@ -72,6 +82,13 @@ class BaseStorageService<T> {
         return this.loadObservable
     }
 
+    private deleteFromStorage(keys: string[], name: string): string[] {
+        let key = this.keyFromName(name)
+        ls.remove(key)
+        let newKeys = this.removeFromArray(keys, name)
+        return newKeys
+    }
+
     private keyFromName(name: string) {
         return `${this.prefix}_${name}`
     }
@@ -101,8 +118,8 @@ export class EnvironmentStorageService {
     constructor() {
         this.ipStorage = new BaseStorageService<string>("IP")
         this.topicStorage = new BaseStorageService<string>("TOPIC")
-        this.produceCommandStorage = new BaseStorageService<ProducerCommandParameters>("PRODUCE_COMMAND")
-        this.consumeCommandStorage = new BaseStorageService<ConsumerCommandParameters>("CONSUME_COMMAND")
+        this.produceCommandStorage = new BaseStorageService<ProducerCommandParameters>("PRODUCE_COMMAND", 5)
+        this.consumeCommandStorage = new BaseStorageService<ConsumerCommandParameters>("CONSUME_COMMAND", 5)
     }
 
     getIPStorage() {

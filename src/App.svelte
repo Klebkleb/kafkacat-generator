@@ -65,16 +65,19 @@
 		display: grid;
 		grid-gap: 2em;
 		grid-template-columns: 1fr 800px 1fr;
+		align-items: start;
 	}
 
 	.content {
 		background-color: white;
 		max-width: 800px;
-		align-self: center;
+		justify-self: center;
+		margin-bottom: 32px;
 	}
 
 	.sidebar {
 		max-width: 300px;
+		margin-bottom: 32px;
 	}
 
 	.sidebar.right {

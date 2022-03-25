@@ -14,10 +14,10 @@
 	const generator = Container.get(ConsumerGenerationService)
 
 	function generate() {
-		generator.generate(commandParameters);
-		let now = new Date();
-		let key = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-		environmentStorage.getConsumeCommandStorage().saveItem(key, commandParameters)
+		let success = generator.generate(commandParameters);
+		if(success) {
+			environmentStorage.getConsumeCommandStorage().saveItem(new Date().toLocaleString(), commandParameters)
+		}
 	}
 
 	environmentStorage.getConsumeCommandStorage().onLoad().subscribe(consumeCommand => {

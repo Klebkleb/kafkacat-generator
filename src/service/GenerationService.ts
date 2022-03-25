@@ -10,8 +10,10 @@ export abstract class GenerationService {
 
     abstract createCommandString(commandParameters: CommandParameters): GenerationResult
 
-    public generate(commandParameters: CommandParameters) {
-        this.dispatch(this.createCommandString(commandParameters))
+    public generate(commandParameters: CommandParameters): boolean {
+        let result = this.createCommandString(commandParameters)
+        this.dispatch(result)
+        return result.success
     }
 
     protected dispatch(result: GenerationResult) {

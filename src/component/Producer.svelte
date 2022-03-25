@@ -14,10 +14,10 @@
 	let environmentStorage = Container.get(EnvironmentStorageService)
 
 	function generate() {
-		generator.generate(commandParameters);
-		let now = new Date();
-		let key = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-		environmentStorage.getProduceCommandStorage().saveItem(key, commandParameters)
+		let success = generator.generate(commandParameters);
+		if(success) {
+			environmentStorage.getProduceCommandStorage().saveItem(new Date().toLocaleString(), commandParameters)
+		}
 	}
 
 	environmentStorage.getProduceCommandStorage().onLoad().subscribe(produceCommand => {
