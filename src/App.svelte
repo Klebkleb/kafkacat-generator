@@ -16,7 +16,6 @@
 
     function generationDone(event: {detail: GenerationResult; }) {
 		if(resultContainer) {
-			console.log(resultContainer)
 			resultContainer.setResult(event.detail);
 		}
 	}

@@ -38,25 +38,16 @@ class BaseStorageService<T> {
         ls.set<T>(key, item)
         let newKeys = this.loadKeys()
         newKeys.unshift(name)
-        if(this.maxSize > -1 && newKeys.length > this.maxSize) {
-            let modifiedKeys = Object.assign([], newKeys)
-            console.log(modifiedKeys)
-            for(let i = this.maxSize; i < newKeys.length; i++) {
-                modifiedKeys = this.deleteFromStorage(modifiedKeys, newKeys[i])
-            }
-            newKeys = modifiedKeys
+        if(this.maxSize > -1) {
+            newKeys = this.cleanExtraItems(newKeys)
         }
         ls.set<string[]>(this.listName(), newKeys)
         this.listObserver.next(newKeys)
     }
 
     deleteItem(name: string) {
-        let key = this.keyFromName(name)
-        ls.remove(key)
         let keys = this.loadKeys()
-        console.log(keys)
-        let newKeys = this.removeFromArray(keys, name)
-        console.log(newKeys)
+        let newKeys = this.deleteFromStorage(keys, name)
         ls.set<string[]>(this.listName(), newKeys)
         this.listObserver.next(newKeys)
     }
@@ -80,6 +71,17 @@ class BaseStorageService<T> {
 
     onLoad(): Observable<T> {
         return this.loadObservable
+    }
+
+    private cleanExtraItems(keys: string[]): string[] {
+        if(keys.length > this.maxSize) {
+            let modifiedKeys = Object.assign([], keys)
+            for(let i = this.maxSize; i < keys.length; i++) {
+                modifiedKeys = this.deleteFromStorage(modifiedKeys, keys[i])
+            }
+            keys = modifiedKeys
+        }
+        return keys;
     }
 
     private deleteFromStorage(keys: string[], name: string): string[] {
