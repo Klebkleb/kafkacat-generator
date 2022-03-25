@@ -10,6 +10,7 @@
 
     export let name: string;
     export let value: string;
+    export let noEdit = false;
 
     const dispatch = createEventDispatcher();
 
@@ -32,7 +33,11 @@
         <div class='value'>{value}</div>
         {/if}
     </div>
+    {#if !noEdit}
     <div class='edit button'><Icon name='edit' size='1.2em' on:clicked={showModal}></Icon></div>
+    {:else }
+    <div></div>
+    {/if}
     <div class='delete button'><Icon name='remove' size='1.2em' on:clicked={() => click("remove")}></Icon></div>
 </div>
 
@@ -40,7 +45,6 @@
     .itemContainer {
         display: inline-grid;
         grid-template-columns: auto 1.2em 1.2em;
-        grid-template-rows: 32px;
         column-gap: 8px;
         width: 100%;
         align-items: center;
@@ -60,11 +64,15 @@
     .name, .value{
         text-align: left;
         margin-left: 16px;
+        max-width: 100%;
     }
 
     .value {
         font-size: 0.75em;
+        white-space: pre-wrap;
+        font-family: monospace;
         color: darkgray;
+        overflow-wrap: anywhere;
     }
 
     .button {

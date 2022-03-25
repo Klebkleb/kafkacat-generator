@@ -36,9 +36,7 @@
     <button on:click={clear}>Clear</button>
     <p>{infoMessage}</p>
     <pre>
-        <code>
-            {result.message}
-        </code>
+        <code>{result.message}</code>
     </pre>
 </div>
 {/if}

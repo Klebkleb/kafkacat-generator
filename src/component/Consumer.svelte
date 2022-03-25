@@ -6,10 +6,23 @@
 	import { ConsumerGenerationService } from "../service/ConsumerGenerationService";
 	import GeneratorStandardInput from "./GeneratorStandardInput.svelte";
 	import Container from "typedi";
+	import { EnvironmentStorageService } from "../service/EnvironmentStorageService";
 
 	let commandParameters: ConsumerCommandParameters = new ConsumerCommandParameters();
+	let environmentStorage = Container.get(EnvironmentStorageService)
 
 	const generator = Container.get(ConsumerGenerationService)
+
+	function generate() {
+		let success = generator.generate(commandParameters);
+		if(success) {
+			environmentStorage.getConsumeCommandStorage().saveItem(new Date().toLocaleString(), commandParameters)
+		}
+	}
+
+	environmentStorage.getConsumeCommandStorage().onLoad().subscribe(consumeCommand => {
+        commandParameters = consumeCommand;
+    })
 </script>
 
 
@@ -53,7 +66,7 @@
 		</div>
 	</div>
 </form>
-<button on:click={() => generator.generate(commandParameters)}> Generate </button>
+<button on:click={generate}> Generate </button>
 
 <style>
 	.formatDiv {

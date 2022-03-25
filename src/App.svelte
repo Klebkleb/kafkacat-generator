@@ -16,7 +16,6 @@
 
     function generationDone(event: {detail: GenerationResult; }) {
 		if(resultContainer) {
-			console.log(resultContainer)
 			resultContainer.setResult(event.detail);
 		}
 	}
@@ -55,7 +54,7 @@
 		<GeneratorResult bind:this={resultContainer}></GeneratorResult>
 	</div>
 	<div class="sidebar right">
-		<SideBar></SideBar>
+		<SideBar currentOption={currentOption}></SideBar>
 	</div>
 </div>
 
@@ -65,16 +64,19 @@
 		display: grid;
 		grid-gap: 2em;
 		grid-template-columns: 1fr 800px 1fr;
+		align-items: start;
 	}
 
 	.content {
 		background-color: white;
 		max-width: 800px;
-		align-self: center;
+		justify-self: center;
+		margin-bottom: 32px;
 	}
 
 	.sidebar {
 		max-width: 300px;
+		margin-bottom: 32px;
 	}
 
 	.sidebar.right {
