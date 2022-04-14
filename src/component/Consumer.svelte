@@ -30,6 +30,10 @@
 <form>
 	<label for="search">Search term</label>
 	<input id="search" bind:value={commandParameters.searchTerm} />
+	<Toggle
+				label="Use jq instead of grep"
+				bind:toggled={commandParameters.useJq}
+	/>
 
 	<label for="messageCount"
 		>Number of messages to {commandParameters.searchTerm ? "search" : "display"}</label
