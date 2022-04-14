@@ -12,7 +12,10 @@ export class ConsumerGenerationService extends GenerationService {
 		try {
 			let searchCommand = "";
 			if (commandParameters.searchTerm) {
-				searchCommand = ` | grep -B 1 -A 1 "${commandParameters.searchTerm}"`;
+				if(commandParameters.useJq){
+					searchCommand = ` | jq '${commandParameters.searchTerm}'`;
+				}
+				else searchCommand = ` | grep -B 1 -A 1 "${commandParameters.searchTerm}"`;
 			}
 			let format = this.createFormatString(commandParameters);
 			result.message = `kafkacat -b ${commandParameters.ip}:${commandParameters.port} -t ${commandParameters.topic} -p 0 -o -${commandParameters.messageCount} -e ${format}${searchCommand}`;

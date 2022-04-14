@@ -5,6 +5,7 @@ export class ConsumerCommandParameters extends CommandParameters {
     formatResponse = true;
 	showHeader = true;
 	showTimestamp = true;
+	useJq = false;
 	customFormat = "";
 	messageCount = 100;
 }
