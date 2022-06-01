@@ -8,15 +8,22 @@
 
     let environmentStorage = Container.get(EnvironmentStorageService)
 
+    setUseIP()
+
     environmentStorage.getIPStorage().onLoad().subscribe(ip => {
         let split = ip.split(':', 2)
         commandParameters.ip = split[0]
         commandParameters.port = Number.parseInt(split[1])
+        setUseIP()
     })
 
     environmentStorage.getTopicStorage().onLoad().subscribe(topic => {
         commandParameters.topic = topic;
     })
+
+    function setUseIP() {
+        commandParameters.useIp = commandParameters.ip != ""
+    }
 
     function saveIP() {
         let formatted = commandParameters.ip + ":" + commandParameters.port
@@ -31,9 +38,10 @@
 <h3>Input</h3>
 <form>
     <label for="ip">IP</label>
-    <input id="ip" bind:value={commandParameters.ip} />:<input
+    <input id="ip" bind:value={commandParameters.ip} on:input={setUseIP} />:<input
         id="port"
         type="number"
+        disabled={!commandParameters.useIp}
         bind:value={commandParameters.port}
     />
     <button on:click={saveIP}> Save</button>
