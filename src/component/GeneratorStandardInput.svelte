@@ -56,6 +56,7 @@
 </script>
 
 <h3>General Input</h3>
+<p>Empty values will be left out of the command.</p>
 <form>
     <label for="ip">IP</label>
     <input id="ip" bind:value={commandParameters.ip} on:input={setUseIP} />:<input
