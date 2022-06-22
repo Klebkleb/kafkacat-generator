@@ -2,6 +2,7 @@
     import Container from 'typedi';
     import type { CustomArg } from '../../model/CommandParameters';
     import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParameters';
+    import { EditMode } from '../../model/EditMode';
     import type { ProducerCommandParameters } from '../../model/ProducerCommandParameters';
     import type { SideBarUpdateEvent } from '../../model/SideBarUpdateEvent';
     import { EnvironmentStorageService } from '../../service/EnvironmentStorageService';
@@ -105,6 +106,10 @@
         envStorage.getTopicStorage().updateItem(event.detail.name, event.detail.updatedName, event.detail.value);
     }
 
+    function editCustomArg(event: CustomEvent<SideBarUpdateEvent>) {
+        envStorage.getCustomArgumentStorage().updateItem(event.detail.name, event.detail.updatedName, JSON.parse(event.detail.value));
+    }
+
     function replacer(key,value)
     {
        if( 
@@ -164,7 +169,8 @@
     <SideBarItem 
         name={customArgKey} 
         value={JSON.stringify(loadCustomArg(customArgKey, false), null, 2)}
-        noEdit={true}
+        edit={EditMode.NAME_ONLY}
+        on:edit={editCustomArg}
         on:open={() => loadCustomArg(customArgKey)}
         on:remove={() => removeCustomArg(customArgKey)}>
     </SideBarItem>
@@ -182,7 +188,7 @@
         <SideBarItem 
             name={consumerCommandKey} 
             value={JSON.stringify(loadConsumerCommand(consumerCommandKey, false), replacer, 2)}
-            noEdit={true}
+            edit={EditMode.NO_EDIT}
             on:open={() => loadConsumerCommand(consumerCommandKey)}
             on:remove={() => removeConsumerCommand(consumerCommandKey)}>
         </SideBarItem>
@@ -198,7 +204,7 @@
         <SideBarItem 
             name={producerCommandKey} 
             value={JSON.stringify(loadProducerCommand(producerCommandKey, false), replacer, 2)}
-            noEdit={true}
+            edit={EditMode.NO_EDIT}
             on:open={() => loadProducerCommand(producerCommandKey)}
             on:remove={() => removeProducerCommand(producerCommandKey)}>
         </SideBarItem>
