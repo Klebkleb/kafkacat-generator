@@ -16,8 +16,9 @@ export class ProducerGenerationService extends GenerationService {
 			} else {
 				msg = commandParameters.message;
 			}
-			let ip = commandParameters.useIp ? `-b  ${commandParameters.ip}:${commandParameters.port}` : ""
-			result.message = `echo '${msg}' | kafkacat -P ${ip} -t ${commandParameters.topic} ${
+			let customCommands = this.createCustomParametersString(commandParameters)
+			let ip = this.createIPString(commandParameters)
+			result.message = `echo '${msg}' | kafkacat -P ${ip} ${customCommands}-t ${commandParameters.topic} ${
 				commandParameters.header ? "-H type=" + commandParameters.header : ""
 			} -c 1 -P`;
 			result.success = true;

@@ -26,6 +26,7 @@
 </script>
 
 <GeneratorStandardInput commandParameters={commandParameters}></GeneratorStandardInput>
+<h3>Producer Input</h3>
 <form>
 	<label for="header">Header</label>
 	<input id="header" bind:value={commandParameters.header} />
