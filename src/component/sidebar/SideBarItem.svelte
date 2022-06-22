@@ -5,12 +5,13 @@
 	import Modal, { bind } from 'svelte-simple-modal';
     import { writable } from 'svelte/store';
     import type { SideBarUpdateEvent } from "../../model/SideBarUpdateEvent";
+    import { EditMode } from "../../model/EditMode";
     
     const modal = writable(null);
 
     export let name: string;
     export let value: string;
-    export let noEdit = false;
+    export let edit: EditMode = EditMode.FULL;
 
     const dispatch = createEventDispatcher();
 
@@ -18,7 +19,7 @@
         dispatch("edit", event)
 	}
 
-    const showModal = () => modal.set(bind(NameModal, { name: name, value: value, onOkay }));
+    const showModal = () => modal.set(bind(NameModal, { name: name, value: value, edit: edit, onOkay }));
 
     function click(action: string) {
 		dispatch(action)
@@ -33,7 +34,7 @@
         <div class='value'>{value}</div>
         {/if}
     </div>
-    {#if !noEdit}
+    {#if (edit != EditMode.NO_EDIT)}
     <div class='edit button'><Icon name='edit' size='1.2em' on:clicked={showModal}></Icon></div>
     {:else }
     <div></div>

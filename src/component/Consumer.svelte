@@ -27,6 +27,7 @@
 
 
 <GeneratorStandardInput commandParameters={commandParameters}></GeneratorStandardInput>
+<h3>Consumer Input</h3>
 <form>
 	<label for="search">Search term</label>
 	<input id="search" bind:value={commandParameters.searchTerm} />

@@ -15,7 +15,9 @@ export class ConsumerGenerationService extends GenerationService {
 				searchCommand = ` | grep -B 1 -A 1 "${commandParameters.searchTerm}"`;
 			}
 			let format = this.createFormatString(commandParameters);
-			result.message = `kafkacat -b ${commandParameters.ip}:${commandParameters.port} -t ${commandParameters.topic} -p 0 -o -${commandParameters.messageCount} -e ${format}${searchCommand}`;
+			let customCommands = this.createCustomParametersString(commandParameters)
+			let ip = this.createIPString(commandParameters)
+			result.message = `kafkacat -C ${ip} ${customCommands}-t ${commandParameters.topic} -p 0 -o -${commandParameters.messageCount} -e ${format}${searchCommand}`;
 			result.success = true;
 		} catch (e) {
 			console.log(e);

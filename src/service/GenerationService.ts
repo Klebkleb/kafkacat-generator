@@ -19,4 +19,20 @@ export abstract class GenerationService {
     protected dispatch(result: GenerationResult) {
         this.dispatcher('commandGenerated', result)
     } 
+
+    protected createCustomParametersString(commandParameters: CommandParameters): string {
+		let result = ""
+		if(commandParameters.customArgs && commandParameters.customArgs.length > 0) {
+			for(let i = 0; i < commandParameters.customArgs.length; i++) {
+				if(commandParameters.customArgs[i].enabled) {
+					result += commandParameters.customArgs[i].value + " "
+				}
+			}
+		}
+		return result
+	}
+
+    protected createIPString(commandParameters: CommandParameters): string {
+        return  commandParameters.useIp ? `-b  ${commandParameters.ip}:${commandParameters.port}` : ""
+    }
 }

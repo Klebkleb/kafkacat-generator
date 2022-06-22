@@ -3,6 +3,7 @@ import type { ConsumerCommandParameters } from "../model/ConsumerCommandParamete
 import type { ProducerCommandParameters } from "../model/ProducerCommandParameters";
 import { Observable, Subscriber } from 'rxjs';
 import { Service } from "typedi";
+import type { CustomArg } from "../model/CommandParameters";
 
 class BaseStorageService<T> {
     static readonly LIST_KEY = "LIST"
@@ -114,12 +115,14 @@ class BaseStorageService<T> {
 export class EnvironmentStorageService {
     private ipStorage: BaseStorageService<string>
     private topicStorage: BaseStorageService<string>
+    private customArgumentStorage: BaseStorageService<CustomArg[]>
     private produceCommandStorage: BaseStorageService<ProducerCommandParameters>
     private consumeCommandStorage: BaseStorageService<ConsumerCommandParameters>
 
     constructor() {
         this.ipStorage = new BaseStorageService<string>("IP")
         this.topicStorage = new BaseStorageService<string>("TOPIC")
+        this.customArgumentStorage = new BaseStorageService<CustomArg[]>("ARGS")
         this.produceCommandStorage = new BaseStorageService<ProducerCommandParameters>("PRODUCE_COMMAND", 5)
         this.consumeCommandStorage = new BaseStorageService<ConsumerCommandParameters>("CONSUME_COMMAND", 5)
     }
@@ -130,6 +133,10 @@ export class EnvironmentStorageService {
 
     getTopicStorage() {
         return this.topicStorage;
+    }
+
+    getCustomArgumentStorage() {
+        return this.customArgumentStorage;
     }
 
     getProduceCommandStorage() {

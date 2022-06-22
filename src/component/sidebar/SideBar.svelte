@@ -1,6 +1,8 @@
 <script lang="ts">
     import Container from 'typedi';
+    import type { CustomArg } from '../../model/CommandParameters';
     import type { ConsumerCommandParameters } from '../../model/ConsumerCommandParameters';
+    import { EditMode } from '../../model/EditMode';
     import type { ProducerCommandParameters } from '../../model/ProducerCommandParameters';
     import type { SideBarUpdateEvent } from '../../model/SideBarUpdateEvent';
     import { EnvironmentStorageService } from '../../service/EnvironmentStorageService';
@@ -12,6 +14,7 @@
 
     let ipKeys: string[];
     let topicKeys: string[];
+    let customArgKeys: string[];
     let consumerCommandHistoryKeys: string[];
     let producerCommandHistoryKeys: string[];
 
@@ -21,6 +24,9 @@
     })
     envStorage.getTopicStorage().onListChange().subscribe((newTopicKeys) => {
         topicKeys = newTopicKeys;
+    })
+    envStorage.getCustomArgumentStorage().onListChange().subscribe((newCustomArgKeys) => {
+        customArgKeys = newCustomArgKeys;
     })
     envStorage.getConsumeCommandStorage().onListChange().subscribe((newConsumerCommandKeys) => {
         consumerCommandHistoryKeys = newConsumerCommandKeys;
@@ -37,6 +43,10 @@
         topicKeys = envStorage.getTopicStorage().loadKeys()
         if(!topicKeys) {
             topicKeys = [];
+        }
+        customArgKeys = envStorage.getCustomArgumentStorage().loadKeys()
+        if(!customArgKeys) {
+            customArgKeys = [];
         }
         consumerCommandHistoryKeys = envStorage.getConsumeCommandStorage().loadKeys()
         if(!consumerCommandHistoryKeys) {
@@ -56,6 +66,10 @@
         return envStorage.getTopicStorage().loadItem(name, broadCast)
     }
 
+    function loadCustomArg(name: string, broadCast = true): CustomArg[] {
+        return envStorage.getCustomArgumentStorage().loadItem(name, broadCast)
+    }
+
     function loadConsumerCommand(name: string, broadCast = true): ConsumerCommandParameters {
         return envStorage.getConsumeCommandStorage().loadItem(name, broadCast)
     }
@@ -70,6 +84,10 @@
 
     function removeTopic(name: string) {
         envStorage.getTopicStorage().deleteItem(name)
+    }
+
+    function removeCustomArg(name: string) {
+        envStorage.getCustomArgumentStorage().deleteItem(name)
     }
 
     function removeConsumerCommand(name: string) {
@@ -88,6 +106,10 @@
         envStorage.getTopicStorage().updateItem(event.detail.name, event.detail.updatedName, event.detail.value);
     }
 
+    function editCustomArg(event: CustomEvent<SideBarUpdateEvent>) {
+        envStorage.getCustomArgumentStorage().updateItem(event.detail.name, event.detail.updatedName, JSON.parse(event.detail.value));
+    }
+
     function replacer(key,value)
     {
        if( 
@@ -104,7 +126,10 @@
 </script>
 
 <div class='sidebar'>
-    <h2>Storage</h2>
+    <h2>Local Storage</h2>
+    <p>Here you can save IPs, topics, custom arguments and view your command history.</p>
+    <p><em>Everything is saved in your local storage only, nothing is stored on a server!</em> Check the <a href="https://github.com/Klebkleb/kafkacat-generator">source code</a> or the network tab if you don't believe me.</p>
+    
     <h3>IPs</h3>
     {#each ipKeys as ipKey}
     <SideBarItem 
@@ -139,13 +164,31 @@
     </div>
     {/if}
 
+    <h3>Custom Arguments</h3>
+    {#each customArgKeys as customArgKey}
+    <SideBarItem 
+        name={customArgKey} 
+        value={JSON.stringify(loadCustomArg(customArgKey, false), null, 2)}
+        edit={EditMode.NAME_ONLY}
+        on:edit={editCustomArg}
+        on:open={() => loadCustomArg(customArgKey)}
+        on:remove={() => removeCustomArg(customArgKey)}>
+    </SideBarItem>
+    {/each}
+    {#if customArgKeys.length == 0}
+    <div class='empty'>
+        <h4>There's nothing here</h4>
+        <p>Save some custom arguments by pressing the save button below the 'Custom Arguments' list.</p>
+    </div>
+    {/if}
+
     <h3>{currentOption} Command History</h3>
     {#if currentOption == "Consume"}
         {#each consumerCommandHistoryKeys as consumerCommandKey}
         <SideBarItem 
             name={consumerCommandKey} 
             value={JSON.stringify(loadConsumerCommand(consumerCommandKey, false), replacer, 2)}
-            noEdit={true}
+            edit={EditMode.NO_EDIT}
             on:open={() => loadConsumerCommand(consumerCommandKey)}
             on:remove={() => removeConsumerCommand(consumerCommandKey)}>
         </SideBarItem>
@@ -161,7 +204,7 @@
         <SideBarItem 
             name={producerCommandKey} 
             value={JSON.stringify(loadProducerCommand(producerCommandKey, false), replacer, 2)}
-            noEdit={true}
+            edit={EditMode.NO_EDIT}
             on:open={() => loadProducerCommand(producerCommandKey)}
             on:remove={() => removeProducerCommand(producerCommandKey)}>
         </SideBarItem>
