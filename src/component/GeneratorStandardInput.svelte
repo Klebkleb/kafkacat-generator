@@ -21,6 +21,10 @@
         commandParameters.topic = topic;
     })
 
+    environmentStorage.getCustomArgumentStorage().onLoad().subscribe(args => {
+        commandParameters.customArgs = args;
+    })
+
     function setUseIP() {
         commandParameters.useIp = commandParameters.ip != ""
     }
@@ -42,6 +46,12 @@
     function removeArg(i: number) {
         commandParameters.customArgs.splice(i,1)
         commandParameters.customArgs = commandParameters.customArgs
+    }
+
+    function saveCustomArgs() {
+        if(commandParameters.customArgs && commandParameters.customArgs.length > 0) {
+            environmentStorage.getCustomArgumentStorage().saveItem(commandParameters.customArgs[0].value, commandParameters.customArgs)
+        }
     }
 </script>
 
@@ -74,6 +84,8 @@
             <input class='column2' bind:value={argument.value} disabled={!argument.enabled}/>
             <button class='column3' on:click={() => removeArg(i)} type="button">Remove</button>
         {/each}
+
+        <button class='column3' on:click={saveCustomArgs} disabled={commandParameters.customArgs.some(el => el.enabled && !el.value)} type="button">Save</button>
         {:else}
         <p class='column1to4 description'>Press the '+' button to add a custom argument to this command. You can quickly enable or disable your custom commands with the enabled field.</p>
         {/if}
